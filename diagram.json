@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "author": "Anonymous maker",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-pi-pico",
+      "id": "pico",
+      "top": -8.9,
+      "left": 7.65,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "board-ili9341-cap-touch",
+      "id": "lcd1",
+      "top": -268.04,
+      "left": -48.38,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-gas-sensor",
+      "id": "gas1",
+      "top": 248.2,
+      "left": 32.9,
+      "rotate": 270,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": 189.9,
+      "left": -42,
+      "rotate": 180,
+      "attrs": { "humidity": "45", "temperature": "27.8" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 25.2,
+      "left": 215,
+      "rotate": 90,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 82.8,
+      "left": 215,
+      "rotate": 90,
+      "attrs": { "color": "blue" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": 140.4,
+      "left": 215,
+      "rotate": 90,
+      "attrs": { "color": "yellow" }
+    }
+  ],
+  "connections": [
+    [ "pico:GP0", "$serialMonitor:RX", "", [] ],
+    [ "pico:GP1", "$serialMonitor:TX", "", [] ],
+    [ "dht1:VCC", "pico:3V3", "red", [ "v-38.4", "h91.95" ] ],
+    [ "dht1:GND", "pico:GND.5", "black", [ "v-48", "h-9.6" ] ],
+    [ "dht1:SDA", "pico:GP20", "green", [ "v-48", "h-0.1" ] ],
+    [ "pico:3V3", "gas1:VCC", "green", [ "v58.8", "h19.2" ] ],
+    [ "gas1:GND", "pico:GND.8", "black", [ "v-57.6", "h-0.8" ] ],
+    [ "gas1:AOUT", "pico:GP28", "green", [ "v-38.4", "h-9.6" ] ],
+    [ "pico:GP22", "led3:C", "green", [ "v0" ] ],
+    [ "pico:GP26", "led2:C", "green", [ "v30", "h153.6", "v-48" ] ],
+    [ "pico:GP27", "led1:C", "green", [ "v20.4", "h134.4", "v-105.6" ] ],
+    [ "led1:A", "pico:GND.8", "green", [ "h-35.6", "v117.6", "h-67.2" ] ],
+    [ "led2:A", "pico:GND.8", "green", [ "h-35.6", "v60", "h-67.2" ] ],
+    [ "led3:A", "pico:GND.8", "green", [ "h-102.8", "v2.4" ] ]
+  ],
+  "dependencies": {}
+}
