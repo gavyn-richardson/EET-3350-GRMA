@@ -32,31 +32,52 @@
       "top": 189.9,
       "left": -42,
       "rotate": 180,
-      "attrs": { "humidity": "45", "temperature": "27.8" }
+      "attrs": { "humidity": "75.5", "temperature": "58.6" }
     },
     {
       "type": "wokwi-led",
       "id": "led1",
-      "top": 25.2,
-      "left": 215,
+      "top": -10.8,
+      "left": 275.4,
       "rotate": 90,
       "attrs": { "color": "red" }
     },
     {
       "type": "wokwi-led",
       "id": "led2",
-      "top": 82.8,
-      "left": 215,
+      "top": 123.6,
+      "left": 275.4,
       "rotate": 90,
       "attrs": { "color": "blue" }
     },
     {
       "type": "wokwi-led",
       "id": "led3",
-      "top": 140.4,
-      "left": 215,
+      "top": 56.4,
+      "left": 275.4,
       "rotate": 90,
       "attrs": { "color": "yellow" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 147.95,
+      "left": 201.6,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 80.75,
+      "left": 201.6,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r3",
+      "top": 13.55,
+      "left": 201.6,
+      "attrs": { "value": "1000" }
     }
   ],
   "connections": [
@@ -68,12 +89,15 @@
     [ "pico:3V3", "gas1:VCC", "green", [ "v58.8", "h19.2" ] ],
     [ "gas1:GND", "pico:GND.8", "black", [ "v-57.6", "h-0.8" ] ],
     [ "gas1:AOUT", "pico:GP28", "green", [ "v-38.4", "h-9.6" ] ],
-    [ "pico:GP22", "led3:C", "green", [ "v0" ] ],
-    [ "pico:GP26", "led2:C", "green", [ "v30", "h153.6", "v-48" ] ],
-    [ "pico:GP27", "led1:C", "green", [ "v20.4", "h134.4", "v-105.6" ] ],
-    [ "led1:A", "pico:GND.8", "green", [ "h-35.6", "v117.6", "h-67.2" ] ],
-    [ "led2:A", "pico:GND.8", "green", [ "h-35.6", "v60", "h-67.2" ] ],
-    [ "led3:A", "pico:GND.8", "green", [ "h-102.8", "v2.4" ] ]
+    [ "pico:GP27", "r3:1", "green", [ "v39.6", "h96", "v-153.6" ] ],
+    [ "r3:2", "led1:A", "green", [ "v0" ] ],
+    [ "pico:GP26", "r2:1", "green", [ "v49.2", "h115.2", "v-86.4" ] ],
+    [ "r2:2", "led3:A", "green", [ "v0" ] ],
+    [ "pico:GP22", "r1:1", "green", [ "v58.8", "h144", "v-28.8" ] ],
+    [ "r1:2", "led2:A", "green", [ "v0" ] ],
+    [ "pico:GND.8", "led2:C", "black", [ "v0" ] ],
+    [ "pico:GND.8", "led1:C", "black", [ "v20.4", "h57.6", "v-134.4" ] ],
+    [ "pico:GND.8", "led3:C", "black", [ "v20.4", "h67.2", "v-67.2" ] ]
   ],
   "dependencies": {}
 }
