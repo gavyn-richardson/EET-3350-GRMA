@@ -1,61 +1,103 @@
 #include "DHTesp.h"
+#include "Adafruit_GFX.h"
+#include "Adafruit_ILI9341.h"
 
-int sensorValue;  //variable to store sensor value
-int qualityThreshold;
-int tempThreshold;
-int humidityThreshold;
-
-const int MQ2pin = 28; 
-const int DHTpin = 20;
-
-const int AlarmPin = 22;
-const int HumidPin = 26;
-const int FanPin = 27;
+// Init variables
+int sensorValue;
+int qualityThreshold = 940;
+int tempThreshold    = 23;
+int humidityThreshold = 50;
 
 DHTesp dhtSensor;
 
+// Sensor Pins
+const int MQ2pin = 28; 
+const int DHTpin = 20;
+
+// TFT Display Pins
+#define TFT_DC   13
+#define TFT_RST  14
+#define TFT_CS   15
+Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
+
+// Output Pins (LEDs)
+const int AlarmPin = 22;
+const int HumidPin = 26;
+const int FanPin   = 27;
+
 void setup() {
   Serial1.begin(115200);
-  
-  dhtSensor.setup(DHTpin, DHTesp::DHT22);
-  Serial1.println("MQ2 warming up");
 
+  // DHT22 setup
+  dhtSensor.setup(DHTpin, DHTesp::DHT22);
+
+  // TFT setup
+  tft.begin();
+  tft.fillScreen(ILI9341_BLACK);
+  tft.setTextSize(3);
+  tft.setTextColor(ILI9341_CYAN);
+  tft.setCursor(20, 20);
+  tft.println("Environment Monitor");
+
+  // LED pins
   pinMode(AlarmPin, OUTPUT);
   pinMode(HumidPin, OUTPUT);
   pinMode(FanPin, OUTPUT);
-	
-  qualityThreshold = 940;
-  tempThreshold = 23;
-  humidityThreshold = 50;
 
-	delay(200); // allow the MQ2 to warm up
+  delay(200); // MQ2 warmup
 }
 
 void loop() {
-  TempAndHumidity  data = dhtSensor.getTempAndHumidity();
-	sensorValue = analogRead(MQ2pin); 
-  Serial1.println("Temp: " + String(data.temperature, 2) + "°C");
+  TempAndHumidity data = dhtSensor.getTempAndHumidity();
+  sensorValue = analogRead(MQ2pin);
+
+  // ===== Serial Monitor Output =====
+  Serial1.println("Temp: " + String(data.temperature, 2) + "C");
   Serial1.println("Humidity: " + String(data.humidity, 1) + "%");
   Serial1.println("Quality: " + String(sensorValue));
-  Serial1.println("---");
+  Serial1.println("-------------------");
 
-	if (sensorValue >= qualityThreshold) {
-		digitalWrite(AlarmPin, HIGH);
-	} else {
-		digitalWrite(AlarmPin, LOW);
-	}
+  // ======== Display Output ========
+  tft.fillRect(0, 70, 240, 150, ILI9341_BLACK);  // clear value area
 
-if (data.temperature >= tempThreshold) {
-		digitalWrite(FanPin, HIGH);
-	} else {
-		digitalWrite(FanPin, LOW);
-	}
+  tft.setTextSize(3);
 
+  // Temperature
+  if (data.temperature >= tempThreshold) {
+    tft.setTextColor(ILI9341_RED);
+  } else {
+    tft.setTextColor(ILI9341_GREEN);
+  }
+  tft.setCursor(10, 80);
+  tft.print("Temp: ");
+  tft.print(data.temperature, 1);
+  tft.println("C");
+
+  // Humidity
   if (data.humidity >= humidityThreshold) {
-		digitalWrite(HumidPin, HIGH);
-	} else {
-		digitalWrite(HumidPin, LOW);
-	}
+    tft.setTextColor(ILI9341_RED);
+  } else {
+    tft.setTextColor(ILI9341_GREEN);
+  }
+  tft.setCursor(10, 120);
+  tft.print("Hum:  ");
+  tft.print(data.humidity, 0);
+  tft.println("%");
 
-  delay(2000); // Wait for a new reading from the sensor (DHT22 has ~0.5Hz sample rate)
+  // Air Quality
+  if (sensorValue >= qualityThreshold) {
+    tft.setTextColor(ILI9341_RED);
+  } else {
+    tft.setTextColor(ILI9341_GREEN);
+  }
+  tft.setCursor(10, 160);
+  tft.print("Gas:  ");
+  tft.print(sensorValue);
+
+  // ======== LED Outputs ========
+  digitalWrite(AlarmPin, sensorValue >= qualityThreshold);
+  digitalWrite(FanPin,   data.temperature >= tempThreshold);
+  digitalWrite(HumidPin, data.humidity >= humidityThreshold);
+
+  delay(1000);
 }
