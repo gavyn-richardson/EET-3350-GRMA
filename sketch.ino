@@ -18,7 +18,10 @@ const int DHTpin = 20;
 #define TFT_DC   13
 #define TFT_RST  14
 #define TFT_CS   15
-Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
+#define TFT_MOSI 12
+#define TFT_SCK  11
+#define TFT_MISO 5
+Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCK, TFT_RST, TFT_MISO);
 
 // Output Pins (LEDs)
 const int AlarmPin = 22;
@@ -33,10 +36,11 @@ void setup() {
 
   // TFT setup
   tft.begin();
+  tft.setRotation(0);
   tft.fillScreen(ILI9341_BLACK);
-  tft.setTextSize(3);
+  tft.setTextSize(2);
   tft.setTextColor(ILI9341_CYAN);
-  tft.setCursor(20, 20);
+  tft.setCursor(5, 20);
   tft.println("Environment Monitor");
 
   // LED pins
@@ -99,5 +103,5 @@ void loop() {
   digitalWrite(FanPin,   data.temperature >= tempThreshold);
   digitalWrite(HumidPin, data.humidity >= humidityThreshold);
 
-  delay(1000);
+  delay(5000);
 }
