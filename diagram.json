@@ -14,7 +14,7 @@
     {
       "type": "board-ili9341-cap-touch",
       "id": "lcd1",
-      "top": -268.04,
+      "top": -325.64,
       "left": -48.38,
       "attrs": {}
     },
@@ -32,7 +32,7 @@
       "top": 189.9,
       "left": -42,
       "rotate": 180,
-      "attrs": { "humidity": "75.5", "temperature": "58.6" }
+      "attrs": { "humidity": "51.5", "temperature": "34.1" }
     },
     {
       "type": "wokwi-led",
@@ -97,7 +97,17 @@
     [ "r1:2", "led2:A", "green", [ "v0" ] ],
     [ "pico:GND.8", "led2:C", "black", [ "v0" ] ],
     [ "pico:GND.8", "led1:C", "black", [ "v20.4", "h57.6", "v-134.4" ] ],
-    [ "pico:GND.8", "led3:C", "black", [ "v20.4", "h67.2", "v-67.2" ] ]
+    [ "pico:GND.8", "led3:C", "black", [ "v20.4", "h67.2", "v-67.2" ] ],
+    [ "lcd1:VCC", "pico:3V3", "red", [ "v19.2", "h-57.6", "v163.2", "h163.2" ] ],
+    [ "lcd1:GND", "pico:GND.1", "black", [ "v28.8", "h76.8" ] ],
+    [ "lcd1:CS", "pico:GP15", "green", [ "v38.4", "h-57.6" ] ],
+    [ "lcd1:RST", "pico:GP14", "green", [ "v48", "h-57.6" ] ],
+    [ "lcd1:D/C", "pico:GP13", "green", [ "v57.6", "h-57.6" ] ],
+    [ "lcd1:MOSI", "pico:GP12", "green", [ "v67.2", "h-48" ] ],
+    [ "pico:GP11", "lcd1:SCK", "green", [ "v-19.2", "h48" ] ],
+    [ "lcd1:LED", "pico:GP6", "green", [ "v0" ] ],
+    [ "lcd1:SCL", "pico:GP4", "green", [ "v67.2", "h9.6" ] ],
+    [ "lcd1:MISO", "pico:GP5", "green", [ "v76.8", "h9.6" ] ]
   ],
   "dependencies": {}
 }
