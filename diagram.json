@@ -32,7 +32,7 @@
       "top": 189.9,
       "left": -42,
       "rotate": 180,
-      "attrs": { "humidity": "51.5", "temperature": "34.1" }
+      "attrs": { "humidity": "28.5", "temperature": "20.7" }
     },
     {
       "type": "wokwi-led",
