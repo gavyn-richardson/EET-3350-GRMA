@@ -1,14 +1,8 @@
 #include "DHTesp.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_ILI9341.h"
-#include <XPT2046_Touchscreen.h>
 
-// ===== TOUCHSCREEN SETUP =====
-#define TOUCH_CS  15   // Change if needed
-
-XPT2046_Touchscreen ts(TOUCH_CS);
-
-// ===== TFT Pins =====
+// Touchscreen pin setup and init based on other wokwi example
 #define TFT_DC   13
 #define TFT_RST  14
 #define TFT_CS   15
@@ -18,53 +12,53 @@ XPT2046_Touchscreen ts(TOUCH_CS);
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCK, TFT_RST, TFT_MISO);
 
-// ===== THRESHOLDS =====
-int tempThreshold = 23;
-int humidityThreshold = 50;
-int qualityThreshold = 940;
-
-// ===== SENSOR =====
+// Sensor and output pin setup
 DHTesp dhtSensor;
 const int MQ2pin = 28;
 const int DHTpin = 20;
 
-// ===== OUTPUTS =====
 const int AlarmPin = 22;
 const int HumidPin = 26;
 const int FanPin   = 27;
 
-// ===== READINGS =====
+// Threshold and snensor variable setup
+int tempThreshold = 23;
+int humidityThreshold = 50;
+int qualityThreshold = 940;
+
 int sensorValue;
 
-// ===== BUTTON STRUCT =====
+// Button class
 struct Button { int x, y, w, h; };
-const int COL_W = 80;
+const int COL_W = 80; // Set column width
 
-// TEMP buttons
-Button T_up   = {0,   200, COL_W, 40};
+// Temperature buttons
+Button T_up   = {0,   200, COL_W, 40}; // Set button dimensions and location
 Button T_down = {0,   280, COL_W, 40};
 
-// HUM buttons
+// Humidity buttons
 Button H_up   = {80,  200, COL_W, 40};
 Button H_down = {80,  280, COL_W, 40};
 
-// GAS buttons
+// Gas buttons
 Button G_up   = {160, 200, COL_W, 40};
 Button G_down = {160, 280, COL_W, 40};
 
 
-// ===== DRAWING =====
+// Draw functions
 void drawButton(Button b, const char* label) {
-  tft.fillRect(b.x, b.y, b.w, b.h, ILI9341_BLUE);
-  tft.drawRect(b.x, b.y, b.w, b.h, ILI9341_WHITE);
-  tft.setTextColor(ILI9341_WHITE);
+  tft.fillRect(b.x, b.y, b.w, b.h, ILI9341_BLUE); // Fills button at button location
+  tft.drawRect(b.x, b.y, b.w, b.h, ILI9341_WHITE);  // Draw border around button
+  tft.setTextColor(ILI9341_WHITE); 
   tft.setTextSize(2);
 
+  // Setup cursor for + or - 
   int textX = b.x + (b.w / 2) - 5;
   int textY = b.y + 12;
   tft.setCursor(textX, textY);
   tft.print(label);
 }
+
 
 void drawThresholdValues() {
   // Clear value areas
@@ -75,7 +69,7 @@ void drawThresholdValues() {
   tft.setTextColor(ILI9341_YELLOW);
   tft.setTextSize(3);
 
-  // Center text manually
+  // Center text 
   tft.setCursor(20, 250);
   tft.print(tempThreshold);
 
@@ -84,34 +78,6 @@ void drawThresholdValues() {
 
   tft.setCursor(170, 250);
   tft.print(qualityThreshold);
-}
-
-bool touched(Button b, int x, int y) {
-  return (x > b.x && x < b.x + b.w && y > b.y && y < b.y + b.h);
-}
-
-void checkTouch() {
-  if (!ts.touched()) return;
-
-  TS_Point p = ts.getPoint();
-
-  int x = map(p.x, 200, 3900, 0, 240);
-  int y = map(p.y, 200, 3900, 0, 320);
-
-  // TEMP
-  if (touched(T_up,   x, y)) tempThreshold++;
-  if (touched(T_down, x, y)) tempThreshold--;
-
-  // HUMIDITY
-  if (touched(H_up,   x, y)) humidityThreshold++;
-  if (touched(H_down, x, y)) humidityThreshold--;
-
-  // GAS
-  if (touched(G_up,   x, y)) qualityThreshold += 5;
-  if (touched(G_down, x, y)) qualityThreshold -= 5;
-
-  drawThresholdValues();
-  delay(220);
 }
 
 void drawAllButtons() {
@@ -127,13 +93,9 @@ void drawAllButtons() {
   drawThresholdValues();
 }
 
-
-// ====== SETUP ======
+// Setup
 void setup() {
   Serial.begin(115200);
-
-  ts.begin();
-  ts.setRotation(1);
 
   dhtSensor.setup(DHTpin, DHTesp::DHT22);
 
@@ -163,16 +125,14 @@ void setup() {
 }
 
 
-// ====== MAIN LOOP ======
+// Main Loop
 void loop() {
-  checkTouch();  // Handle threshold button input
-
-  // ===== Read Sensors =====
+  // Read sensors
   TempAndHumidity data = dhtSensor.getTempAndHumidity();
   sensorValue = analogRead(MQ2pin);
 
-  // ======= Display Current Readings (Top Section) =======
-  tft.fillRect(100, 50, 240, 150, ILI9341_BLACK); // clear old readings
+  // Display Sesnor Readings
+  tft.fillRect(100, 50, 240, 150, ILI9341_BLACK); // Clear old readings
   tft.setTextSize(3);
 
   // Temperature
@@ -198,7 +158,7 @@ void loop() {
   tft.setCursor(100, 140);
   tft.print(sensorValue);
 
-  // ======= LED Outputs =======
+  // LED Outputs
   digitalWrite(AlarmPin, sensorValue >= qualityThreshold);
   digitalWrite(FanPin,   data.temperature >= tempThreshold);
   digitalWrite(HumidPin, data.humidity >= humidityThreshold);
